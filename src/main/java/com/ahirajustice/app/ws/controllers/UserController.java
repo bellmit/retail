@@ -5,8 +5,12 @@ import java.util.List;
 
 import com.ahirajustice.app.ws.dtos.user.UserCreateDto;
 import com.ahirajustice.app.ws.dtos.user.UserUpdateDto;
+import com.ahirajustice.app.ws.entities.User;
+import com.ahirajustice.app.ws.services.user.IUserService;
 import com.ahirajustice.app.ws.viewmodels.user.UserViewModel;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/users")
 public class UserController {
+
+    @Autowired
+    private IUserService userService;
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -34,8 +41,13 @@ public class UserController {
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserViewModel createUser(@RequestBody UserCreateDto user) {
-        return null;
+    public UserViewModel createUser(@RequestBody UserCreateDto userDto) {
+        UserViewModel response = new UserViewModel();
+
+        User createdUser = userService.createUser(userDto);
+        BeanUtils.copyProperties(createdUser, response);
+
+        return response;
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
