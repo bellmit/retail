@@ -1,7 +1,7 @@
 package com.ahirajustice.app.ws.security;
 
 import com.ahirajustice.app.ws.constants.SecurityConstants;
-import com.ahirajustice.app.ws.services.user.UserService;
+import com.ahirajustice.app.ws.services.auth.IAuthService;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,11 +13,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private final UserService userDetailsService;
+    private final IAuthService authService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public WebSecurity(UserService userDetailsService, BCryptPasswordEncoder passwordEncoder) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurity(IAuthService authService, BCryptPasswordEncoder passwordEncoder) {
+        this.authService = authService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -29,6 +29,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(authService).passwordEncoder(passwordEncoder);
     }
 }
