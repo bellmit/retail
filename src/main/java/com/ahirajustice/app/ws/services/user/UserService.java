@@ -3,7 +3,7 @@ package com.ahirajustice.app.ws.services.user;
 import com.ahirajustice.app.ws.common.Utils;
 import com.ahirajustice.app.ws.dtos.user.UserCreateDto;
 import com.ahirajustice.app.ws.entities.User;
-import com.ahirajustice.app.ws.repositories.UserRepository;
+import com.ahirajustice.app.ws.repositories.IUserRepository;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserService implements IUserService {
 
     @Autowired
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     @Autowired
     Utils utils;
