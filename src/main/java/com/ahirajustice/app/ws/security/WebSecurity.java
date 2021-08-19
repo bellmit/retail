@@ -1,6 +1,7 @@
 package com.ahirajustice.app.ws.security;
 
 import com.ahirajustice.app.ws.constants.SecurityConstants;
+import com.ahirajustice.app.ws.filters.AuthenticationFilter;
 import com.ahirajustice.app.ws.services.auth.IAuthService;
 
 import org.springframework.http.HttpMethod;
@@ -24,7 +25,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL)
-                .permitAll().anyRequest().authenticated();
+                .permitAll().anyRequest().authenticated().and().addFilter(new AuthenticationFilter(authenticationManager()));
     }
 
     @Override
