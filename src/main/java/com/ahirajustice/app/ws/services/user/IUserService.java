@@ -5,6 +5,6 @@ import com.ahirajustice.app.ws.entities.User;
 
 public interface IUserService {
 
-    User createUser(UserCreateDto userDao);
-
+    User createUser(UserCreateDto userDto);
+    User getUser(String email);
 }

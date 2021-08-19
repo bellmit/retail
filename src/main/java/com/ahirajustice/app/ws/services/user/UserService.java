@@ -42,4 +42,15 @@ public class UserService implements IUserService {
         return createdUser;
     }
 
+    @Override
+    public User getUser(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("Could not find user with given email");
+        }
+
+        return user;
+    }
+
 }
