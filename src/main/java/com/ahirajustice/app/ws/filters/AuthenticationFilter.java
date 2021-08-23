@@ -1,6 +1,7 @@
 package com.ahirajustice.app.ws.filters;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,9 +14,9 @@ import com.ahirajustice.app.ws.config.AppConfig;
 import com.ahirajustice.app.ws.config.SpringApplicationContext;
 import com.ahirajustice.app.ws.constants.SecurityConstants;
 import com.ahirajustice.app.ws.dtos.auth.LoginDto;
-import com.ahirajustice.app.ws.entities.User;
-import com.ahirajustice.app.ws.services.user.IUserService;
+import com.ahirajustice.app.ws.responses.auth.LoginResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final Gson gson = new Gson();
 
     public AuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -52,14 +54,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         AppConfig appConfig = (AppConfig) SpringApplicationContext.getBean("appConfig");
 
         String username = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername();
-        String token = Jwts.builder().setSubject(username).setExpiration(new Date(System.currentTimeMillis() + appConfig.ACCESS_TOKEN_EXPIRE_MINUTES))
+        String token = Jwts.builder().setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + appConfig.ACCESS_TOKEN_EXPIRE_MINUTES))
                 .signWith(SignatureAlgorithm.HS512, appConfig.SECRET_KEY).compact();
 
-        IUserService userService = (IUserService) SpringApplicationContext.getBean("userService");
-        User user = userService.getUser(username); 
+        LoginResponse response = new LoginResponse();
+        response.setAccessToken(token);
+        response.setTokenType(SecurityConstants.TOKEN_PREFIX);
+        String responseBody = this.gson.toJson(response);
 
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + " " + token);
-        res.addHeader("UserID", "" + user.getId());
+        PrintWriter writer = res.getWriter();
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        writer.print(responseBody);
+        writer.flush();
     }
 
 }
