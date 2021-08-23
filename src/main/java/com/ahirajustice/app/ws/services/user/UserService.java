@@ -1,5 +1,7 @@
 package com.ahirajustice.app.ws.services.user;
 
+import java.util.Optional;
+
 import com.ahirajustice.app.ws.common.Utils;
 import com.ahirajustice.app.ws.dtos.user.UserCreateDto;
 import com.ahirajustice.app.ws.entities.User;
@@ -51,6 +53,17 @@ public class UserService implements IUserService {
         }
 
         return user;
+    }
+
+    @Override
+    public User getUser(long id) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (!user.isPresent()) {
+            throw new RuntimeException("Could not find user with given email");
+        }
+
+        return user.get();
     }
 
 }

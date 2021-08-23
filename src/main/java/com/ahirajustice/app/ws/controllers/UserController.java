@@ -12,10 +12,10 @@ import com.ahirajustice.app.ws.viewmodels.user.UserViewModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,8 +35,13 @@ public class UserController {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public UserViewModel getUser(@RequestParam long id) {
-        return null;
+    public UserViewModel getUser(@PathVariable long id) {
+        UserViewModel response = new UserViewModel();
+
+        User user = userService.getUser(id);
+        BeanUtils.copyProperties(user, response);
+
+        return response;
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
@@ -52,13 +57,13 @@ public class UserController {
 
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public UserViewModel updateUser(@RequestParam long id, @RequestBody UserUpdateDto user) {
+    public UserViewModel updateUser(@PathVariable long id, @RequestBody UserUpdateDto user) {
         return null;
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@RequestParam long id) {
+    public void deleteUser(@PathVariable long id) {
 
     }
 }
