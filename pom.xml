@@ -11,9 +11,9 @@
 	</parent>
 
 	<groupId>com.ahirajustice</groupId>
-	<artifactId>mobile-app-ws</artifactId>
+	<artifactId>app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mobile-app-ws</name>
+	<name>app</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
