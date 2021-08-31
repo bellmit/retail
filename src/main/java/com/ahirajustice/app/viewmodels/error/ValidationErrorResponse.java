@@ -6,6 +6,10 @@ public class ValidationErrorResponse extends ErrorResponse {
     
     private Dictionary<String, String> errors;
 
+    public ValidationErrorResponse() {
+        super();
+    }
+
     public Dictionary<String, String> getErrors() {
         return errors;
     }
