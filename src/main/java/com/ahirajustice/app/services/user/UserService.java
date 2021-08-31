@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.ahirajustice.app.common.Utils;
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.entities.User;
+import com.ahirajustice.app.exceptions.BadRequestException;
 import com.ahirajustice.app.repositories.IUserRepository;
 
 import org.springframework.beans.BeanUtils;
@@ -25,13 +26,13 @@ public class UserService implements IUserService {
     BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User createUser(UserCreateDto userDto) {
+    public User createUser(UserCreateDto userDto) throws BadRequestException {
         User user = new User();
 
         User userExists = userRepository.findByEmail(userDto.getEmail());
 
         if (userExists != null) {
-            throw new RuntimeException("User with email already exists");
+            throw new BadRequestException("User with email already exists");
         }
 
         BeanUtils.copyProperties(userDto, user);

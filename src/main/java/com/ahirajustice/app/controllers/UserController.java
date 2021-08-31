@@ -6,6 +6,7 @@ import java.util.List;
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
 import com.ahirajustice.app.entities.User;
+import com.ahirajustice.app.exceptions.BadRequestException;
 import com.ahirajustice.app.services.user.IUserService;
 import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
@@ -46,7 +47,7 @@ public class UserController {
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserViewModel createUser(@RequestBody UserCreateDto userDto) {
+    public UserViewModel createUser(@RequestBody UserCreateDto userDto) throws BadRequestException {
         UserViewModel response = new UserViewModel();
 
         User createdUser = userService.createUser(userDto);
@@ -66,4 +67,5 @@ public class UserController {
     public void deleteUser(@PathVariable long id) {
 
     }
+
 }
