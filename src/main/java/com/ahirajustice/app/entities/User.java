@@ -1,20 +1,10 @@
 package com.ahirajustice.app.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity(name = "users")
-public class User implements Serializable {
-
-    private static final long serialVersionUID = 5865903736190450273L;
-
-    @Id
-    @GeneratedValue
-    private long id;
+public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 150)
     private String email;
@@ -32,14 +22,6 @@ public class User implements Serializable {
 
     @Column(nullable = false, length = 50)
     private String lastName;
-
-    public long getId() {
-        return this.id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;
