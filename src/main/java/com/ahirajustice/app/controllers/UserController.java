@@ -7,7 +7,10 @@ import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
 import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.exceptions.BadRequestException;
+import com.ahirajustice.app.exceptions.ValidationException;
 import com.ahirajustice.app.services.user.IUserService;
+import com.ahirajustice.app.validators.ValidatorUtils;
+import com.ahirajustice.app.validators.user.UserCreateDtoValidator;
 import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
 import org.springframework.beans.BeanUtils;
@@ -47,7 +50,10 @@ public class UserController {
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserViewModel createUser(@RequestBody UserCreateDto userDto) throws BadRequestException {
+    public UserViewModel createUser(@RequestBody UserCreateDto userDto) throws BadRequestException, ValidationException {
+        ValidatorUtils<UserCreateDto> validator = new ValidatorUtils<UserCreateDto>();
+        validator.validate(new UserCreateDtoValidator(), userDto);
+
         UserViewModel response = new UserViewModel();
 
         User createdUser = userService.createUser(userDto);
