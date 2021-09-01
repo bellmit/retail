@@ -2,7 +2,6 @@ package com.ahirajustice.app.services.user;
 
 import java.util.Optional;
 
-import com.ahirajustice.app.common.Utils;
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.exceptions.BadRequestException;
@@ -18,9 +17,6 @@ public class UserService implements IUserService {
 
     @Autowired
     IUserRepository userRepository;
-
-    @Autowired
-    Utils utils;
 
     @Autowired
     BCryptPasswordEncoder passwordEncoder;
