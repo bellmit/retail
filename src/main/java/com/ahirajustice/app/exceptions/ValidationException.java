@@ -1,13 +1,13 @@
 package com.ahirajustice.app.exceptions;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import com.ahirajustice.app.viewmodels.error.ErrorResponse;
 import com.ahirajustice.app.viewmodels.error.ValidationErrorResponse;
 
-import org.springframework.validation.FieldError;
+import br.com.fluentvalidator.context.Error;
 
 public class ValidationException extends ApplicationDomainException {
 
@@ -18,11 +18,11 @@ public class ValidationException extends ApplicationDomainException {
         this.failures = new Hashtable<String, String>();
     }
 
-    public ValidationException(List<FieldError> errors) {
+    public ValidationException(Collection<Error> errors) {
         this();
 
-        for (FieldError error : errors) {
-            this.failures.put(error.getField(), error.getDefaultMessage());
+        for (Error error : errors) {
+            this.failures.put(error.getField(), error.getMessage());
         }
     }
 
