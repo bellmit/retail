@@ -1,15 +1,23 @@
 package com.ahirajustice.app.services.user;
 
+import java.util.List;
+
 import com.ahirajustice.app.dtos.user.UserCreateDto;
-import com.ahirajustice.app.entities.User;
+import com.ahirajustice.app.dtos.user.UserUpdateDto;
 import com.ahirajustice.app.exceptions.BadRequestException;
+import com.ahirajustice.app.exceptions.NotFoundException;
+import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
 public interface IUserService {
 
-    User createUser(UserCreateDto userDto) throws BadRequestException;
+    List<UserViewModel> getUsers();
 
-    User getUser(String email);
+    UserViewModel getUser(String email) throws NotFoundException;
 
-    User getUser(long id);
+    UserViewModel getUser(long id) throws NotFoundException;
+
+    UserViewModel createUser(UserCreateDto userDto) throws BadRequestException;
+
+    UserViewModel updateUser(UserUpdateDto userDto) throws NotFoundException;
 
 }

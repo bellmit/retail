@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
-import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.exceptions.BadRequestException;
+import com.ahirajustice.app.exceptions.NotFoundException;
 import com.ahirajustice.app.exceptions.ValidationException;
 import com.ahirajustice.app.services.user.IUserService;
 import com.ahirajustice.app.validators.ValidatorUtils;
 import com.ahirajustice.app.validators.user.UserCreateDtoValidator;
+import com.ahirajustice.app.validators.user.UserUpdateDtoValidator;
 import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,39 +39,35 @@ public class UserController {
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public UserViewModel getUser(@PathVariable long id) {
-        UserViewModel response = new UserViewModel();
-
-        User user = userService.getUser(id);
-        BeanUtils.copyProperties(user, response);
-
-        return response;
+    public UserViewModel getUser(@PathVariable long id) throws NotFoundException {
+        UserViewModel user = userService.getUser(id);
+        return user;
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserViewModel createUser(@RequestBody UserCreateDto userDto) throws BadRequestException, ValidationException {
+    public UserViewModel createUser(@RequestBody UserCreateDto userDto)
+            throws BadRequestException, ValidationException {
         ValidatorUtils<UserCreateDto> validator = new ValidatorUtils<UserCreateDto>();
         validator.validate(new UserCreateDtoValidator(), userDto);
 
-        UserViewModel response = new UserViewModel();
-
-        User createdUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createdUser, response);
-
-        return response;
+        UserViewModel createdUser = userService.createUser(userDto);
+        return createdUser;
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public UserViewModel updateUser(@PathVariable long id, @RequestBody UserUpdateDto user) {
-        return null;
-    }
+    public UserViewModel updateUser(@PathVariable long id, @RequestBody UserUpdateDto userDto)
+            throws BadRequestException, NotFoundException, ValidationException {
+        ValidatorUtils<UserUpdateDto> validator = new ValidatorUtils<UserUpdateDto>();
+        validator.validate(new UserUpdateDtoValidator(), userDto);
 
-    @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable long id) {
+        if (id != userDto.getId()) {
+            throw new BadRequestException("identifier mismatch");
+        }
 
+        UserViewModel updatedUser = userService.updateUser(userDto);
+        return updatedUser;
     }
 
 }
