@@ -1,6 +1,7 @@
 package com.ahirajustice.app.services.auth;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.repositories.IUserRepository;
@@ -18,11 +19,13 @@ public class AuthService implements IAuthService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
+        Optional<User> userExists = userRepository.findByEmail(email);
 
-        if (user == null) {
+        if (!userExists.isPresent()) {
             throw new UsernameNotFoundException(email);
         }
+
+        User user = userExists.get();
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getEncryptedPassword(),
                 new ArrayList<>());
