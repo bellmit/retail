@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.ahirajustice.app.config.AppConfig;
+import com.ahirajustice.app.constants.SecurityConstants;
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
 import com.ahirajustice.app.entities.User;
@@ -17,8 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Jwts;
+
 @Service
 public class UserService implements IUserService {
+
+    @Autowired
+    AppConfig appConfig;
+
+    @Autowired
+    HttpServletRequest request;
 
     @Autowired
     IUserRepository userRepository;
@@ -116,6 +128,31 @@ public class UserService implements IUserService {
         BeanUtils.copyProperties(user, response);
 
         return response;
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Optional<User> userExists = userRepository.findByEmail(getUsernameFromToken());
+
+        if (userExists.isPresent()) {
+            return null;
+        }
+
+        return userExists.get();
+    }
+
+    private String getUsernameFromToken() {
+        String header = request.getHeader(SecurityConstants.HEADER_STRING);
+
+        if (header == null) {
+            return null;
+        }
+
+        String token = header.split(" ")[1];
+        String username = Jwts.parser().setSigningKey(appConfig.SECRET_KEY).parseClaimsJws(token).getBody()
+                .getSubject();
+
+        return username;
     }
 
 }
