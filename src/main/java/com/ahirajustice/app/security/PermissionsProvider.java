@@ -7,14 +7,14 @@ import com.ahirajustice.app.entities.Permission;
 import com.ahirajustice.app.entities.Role;
 import com.ahirajustice.app.enums.Roles;
 
-public class SecurityUtils {
+public class PermissionsProvider {
 
     // User permissions
-    private static Permission CAN_CREATE_USER = new Permission("CAN_CREATE_USER");
-    private static Permission CAN_CREATE_ADMIN_USER = new Permission("CAN_CREATE_ADMIN_USER", true);
-    private static Permission CAN_CREATE_SUPER_ADMIN_USER = new Permission("CAN_CREATE_SUPER_ADMIN_USER", true);
-    private static Permission CAN_UPDATE_USER = new Permission("CAN_UPDATE_USER");
-    private static Permission CAN_UPDATE_ALL_USERS = new Permission("CAN_UPDATE_ALL_USERS", true);
+    public static Permission CAN_CREATE_USER = new Permission("CAN_CREATE_USER");
+    public static Permission CAN_CREATE_ADMIN_USER = new Permission("CAN_CREATE_ADMIN_USER", true);
+    public static Permission CAN_CREATE_SUPER_ADMIN_USER = new Permission("CAN_CREATE_SUPER_ADMIN_USER", true);
+    public static Permission CAN_UPDATE_USER = new Permission("CAN_UPDATE_USER");
+    public static Permission CAN_UPDATE_ALL_USERS = new Permission("CAN_UPDATE_ALL_USERS", true);
 
     public static Set<Permission> getAllPermissions() {
         Set<Permission> permissions = new HashSet<Permission>();
