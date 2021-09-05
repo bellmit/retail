@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id                        BIGINT       NOT NULL,
+    id                        BIGINT       NOT NULL AUTO_INCREMENT,
     created_on                datetime NULL,
     updated_on                datetime NULL,
     is_deleted                BIT(1) NULL,

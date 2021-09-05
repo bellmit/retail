@@ -1,6 +1,6 @@
 CREATE TABLE permissions
 (
-    id         BIGINT NOT NULL,
+    id         BIGINT NOT NULL AUTO_INCREMENT,
     created_on datetime NULL,
     updated_on datetime NULL,
     is_deleted BIT(1) NULL,
@@ -8,6 +8,9 @@ CREATE TABLE permissions
     is_system  BIT(1) NULL,
     CONSTRAINT pk_permissions PRIMARY KEY (id)
 );
+
+ALTER TABLE permissions
+    ADD CONSTRAINT uc_permissions_name UNIQUE (name);
 
 CREATE TABLE roles_permissions
 (
