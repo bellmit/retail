@@ -3,6 +3,7 @@ package com.ahirajustice.app.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -13,6 +14,7 @@ import javax.persistence.OneToMany;
 @Entity(name = "roles")
 public class Role extends BaseEntity {
 
+    @Column(unique = true)
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -21,6 +23,14 @@ public class Role extends BaseEntity {
 
     @OneToMany(mappedBy = "role")
     private Set<User> users = new HashSet<User>();
+
+    public Role() {
+
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

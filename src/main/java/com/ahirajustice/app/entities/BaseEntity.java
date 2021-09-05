@@ -3,6 +3,7 @@ package com.ahirajustice.app.entities;
 import java.time.LocalDateTime;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
@@ -12,7 +13,7 @@ import javax.persistence.PreUpdate;
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     
     private LocalDateTime createdOn;
