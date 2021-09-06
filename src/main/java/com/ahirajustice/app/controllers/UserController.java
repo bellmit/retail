@@ -1,6 +1,5 @@
 package com.ahirajustice.app.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.ahirajustice.app.dtos.user.UserCreateDto;
@@ -33,7 +32,7 @@ public class UserController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<UserViewModel> getUsers() {
-        List<UserViewModel> users = new ArrayList<UserViewModel>();
+        List<UserViewModel> users = userService.getUsers();
         return users;
     }
 
