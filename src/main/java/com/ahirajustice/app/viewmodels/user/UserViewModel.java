@@ -1,19 +1,12 @@
 package com.ahirajustice.app.viewmodels.user;
 
-public class UserViewModel {
+import com.ahirajustice.app.viewmodels.BaseViewModel;
 
-    private long id;
+public class UserViewModel extends BaseViewModel {
+
     private String email;
     private String firstName;
     private String lastName;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;
