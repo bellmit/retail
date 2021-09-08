@@ -56,7 +56,7 @@ public class PermissionService implements IPermissionService {
     }
 
     @Override
-    public boolean Authorize(Permission checkPermission) {
+    public boolean authorize(Permission checkPermission) {
         User user = userService.getCurrentUser();
 
         Set<Permission> permissions = user.getRole().getPermissions();

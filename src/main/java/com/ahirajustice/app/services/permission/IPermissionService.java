@@ -12,6 +12,6 @@ public interface IPermissionService {
 
     PermissionViewModel getPermission(long id) throws NotFoundException;
 
-    boolean Authorize(Permission permission);
+    boolean authorize(Permission permission);
 
 }
