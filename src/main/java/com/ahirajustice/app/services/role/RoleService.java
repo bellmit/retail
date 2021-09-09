@@ -1,15 +1,19 @@
 package com.ahirajustice.app.services.role;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.ahirajustice.app.dtos.role.RoleCreateDto;
 import com.ahirajustice.app.dtos.role.RoleUpdateDto;
+import com.ahirajustice.app.entities.Permission;
 import com.ahirajustice.app.entities.Role;
 import com.ahirajustice.app.exceptions.BadRequestException;
 import com.ahirajustice.app.exceptions.ForbiddenException;
 import com.ahirajustice.app.exceptions.NotFoundException;
+import com.ahirajustice.app.repositories.IPermissionRepository;
 import com.ahirajustice.app.repositories.IRoleRepository;
 import com.ahirajustice.app.viewmodels.role.RoleViewModel;
 
@@ -22,6 +26,9 @@ public class RoleService implements IRoleService {
 
     @Autowired
     IRoleRepository roleRepository;
+
+    @Autowired
+    IPermissionRepository permissionRepository;
 
     public List<RoleViewModel> getRoles() {
         List<RoleViewModel> responses = new ArrayList<RoleViewModel>();
@@ -62,8 +69,14 @@ public class RoleService implements IRoleService {
         if (roleExists.isPresent()) {
             throw new BadRequestException(String.format("Role with name: '%s' already exists", roleDto.getName()));
         }
+        
+        Set<Permission> permissions = new HashSet<Permission>();
+        for (long permissionId : roleDto.getPermissionIds()) {
+            permissions.add(permissionRepository.findById(permissionId).get());
+        }
 
         BeanUtils.copyProperties(roleDto, role);
+        role.setPermissions(permissions);
 
         Role createdRole = roleRepository.save(role);
 
@@ -84,11 +97,17 @@ public class RoleService implements IRoleService {
 
         Role role = roleExists.get();
 
+        Set<Permission> permissions = new HashSet<Permission>();
+        for (long permissionId : roleDto.getPermissionIds()) {
+            permissions.add(permissionRepository.findById(permissionId).get());
+        }
+
         role.setName(roleDto.getName());
+        role.setPermissions(permissions);
 
-        roleRepository.save(role);
+        Role updatedRole = roleRepository.save(role);
 
-        BeanUtils.copyProperties(role, response);
+        BeanUtils.copyProperties(updatedRole, response);
 
         return response;
     }
