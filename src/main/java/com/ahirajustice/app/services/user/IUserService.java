@@ -1,6 +1,7 @@
 package com.ahirajustice.app.services.user;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
@@ -21,6 +22,6 @@ public interface IUserService {
 
     UserViewModel updateUser(UserUpdateDto userDto) throws NotFoundException;
 
-    User getCurrentUser();
+    Optional<User> getCurrentUser();
 
 }

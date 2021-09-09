@@ -123,22 +123,16 @@ public class UserService implements IUserService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
 
-        userRepository.save(user);
+        User updatedUser = userRepository.save(user);
 
-        BeanUtils.copyProperties(user, response);
+        BeanUtils.copyProperties(updatedUser, response);
 
         return response;
     }
 
     @Override
-    public User getCurrentUser() {
-        Optional<User> userExists = userRepository.findByEmail(getUsernameFromToken());
-
-        if (userExists.isPresent()) {
-            return null;
-        }
-
-        return userExists.get();
+    public Optional<User> getCurrentUser() {
+        return userRepository.findByEmail(getUsernameFromToken());
     }
 
     private String getUsernameFromToken() {

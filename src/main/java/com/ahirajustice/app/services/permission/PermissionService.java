@@ -57,9 +57,13 @@ public class PermissionService implements IPermissionService {
 
     @Override
     public boolean authorize(Permission checkPermission) {
-        User user = userService.getCurrentUser();
+        Optional<User> userExists = userService.getCurrentUser();
 
-        Set<Permission> permissions = user.getRole().getPermissions();
+        if (!userExists.isPresent()){
+            return false;
+        }
+
+        Set<Permission> permissions = userExists.get().getRole().getPermissions();
 
         for (Permission permission : permissions) {
             if (checkPermission.getName().equals(permission.getName())) {
