@@ -2,6 +2,7 @@ package com.ahirajustice.app.controllers;
 
 import java.util.List;
 
+import com.ahirajustice.app.exceptions.ForbiddenException;
 import com.ahirajustice.app.exceptions.NotFoundException;
 import com.ahirajustice.app.services.permission.IPermissionService;
 import com.ahirajustice.app.viewmodels.permission.PermissionViewModel;
@@ -23,14 +24,14 @@ public class PermissionsController {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<PermissionViewModel> getPermissions() {
+    public List<PermissionViewModel> getPermissions() throws ForbiddenException {
         List<PermissionViewModel> permissions = permissionService.getPermissions();
         return permissions;
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public PermissionViewModel getPermission(@PathVariable long id) throws NotFoundException {
+    public PermissionViewModel getPermission(@PathVariable long id) throws NotFoundException, ForbiddenException {
         PermissionViewModel permission = permissionService.getPermission(id);
         return permission;
     }

@@ -32,14 +32,14 @@ public class RoleController {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<RoleViewModel> getRoles() {
+    public List<RoleViewModel> getRoles() throws ForbiddenException{
         List<RoleViewModel> roles = roleService.getRoles();
         return roles;
     }
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public RoleViewModel getRole(@PathVariable long id) throws NotFoundException {
+    public RoleViewModel getRole(@PathVariable long id) throws NotFoundException, ForbiddenException {
         RoleViewModel role = roleService.getRole(id);
         return role;
     }

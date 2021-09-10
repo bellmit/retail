@@ -14,9 +14,12 @@ import com.ahirajustice.app.entities.Role;
 import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.enums.Roles;
 import com.ahirajustice.app.exceptions.BadRequestException;
+import com.ahirajustice.app.exceptions.ForbiddenException;
 import com.ahirajustice.app.exceptions.NotFoundException;
 import com.ahirajustice.app.repositories.IRoleRepository;
 import com.ahirajustice.app.repositories.IUserRepository;
+import com.ahirajustice.app.security.PermissionsProvider;
+import com.ahirajustice.app.services.permission.IPermissionValidatorService;
 import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
 import org.springframework.beans.BeanUtils;
@@ -42,10 +45,17 @@ public class UserService implements IUserService {
     IRoleRepository roleRepository;
 
     @Autowired
+    IPermissionValidatorService permissionValidatorService;
+
+    @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserViewModel> getUsers() {
+    public List<UserViewModel> getUsers() throws ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_VIEW_ALL_USERS)) {
+            throw new ForbiddenException();
+        }
+
         List<UserViewModel> responses = new ArrayList<UserViewModel>();
 
         Iterable<User> users = userRepository.findAll();
@@ -61,7 +71,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserViewModel getUser(String email) throws NotFoundException {
+    public UserViewModel getUser(String email) throws NotFoundException, ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_VIEW_USER)) {
+            throw new ForbiddenException();
+        }
+
         UserViewModel response = new UserViewModel();
 
         Optional<User> userExists = userRepository.findByEmail(email);
@@ -77,7 +91,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserViewModel getUser(long id) throws NotFoundException {
+    public UserViewModel getUser(long id) throws NotFoundException, ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_VIEW_USER)) {
+            throw new ForbiddenException();
+        }
+
         UserViewModel response = new UserViewModel();
 
         Optional<User> userExists = userRepository.findById(id);
@@ -120,7 +138,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserViewModel updateUser(UserUpdateDto userDto) throws NotFoundException {
+    public UserViewModel updateUser(UserUpdateDto userDto) throws NotFoundException, ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_UPDATE_USER)) {
+            throw new ForbiddenException();
+        }
+
         UserViewModel response = new UserViewModel();
 
         Optional<User> userExists = userRepository.findById(userDto.getId());

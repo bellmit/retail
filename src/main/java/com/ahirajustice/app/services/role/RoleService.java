@@ -15,6 +15,8 @@ import com.ahirajustice.app.exceptions.ForbiddenException;
 import com.ahirajustice.app.exceptions.NotFoundException;
 import com.ahirajustice.app.repositories.IPermissionRepository;
 import com.ahirajustice.app.repositories.IRoleRepository;
+import com.ahirajustice.app.security.PermissionsProvider;
+import com.ahirajustice.app.services.permission.IPermissionValidatorService;
 import com.ahirajustice.app.viewmodels.role.RoleViewModel;
 
 import org.springframework.beans.BeanUtils;
@@ -30,7 +32,14 @@ public class RoleService implements IRoleService {
     @Autowired
     IPermissionRepository permissionRepository;
 
-    public List<RoleViewModel> getRoles() {
+    @Autowired
+    IPermissionValidatorService permissionValidatorService;
+
+    public List<RoleViewModel> getRoles() throws ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_VIEW_ALL_ROLES)) {
+            throw new ForbiddenException();
+        }
+
         List<RoleViewModel> responses = new ArrayList<RoleViewModel>();
 
         Iterable<Role> roles = roleRepository.findAll();
@@ -44,7 +53,11 @@ public class RoleService implements IRoleService {
         return responses;
     }
 
-    public RoleViewModel getRole(long id) throws NotFoundException {
+    public RoleViewModel getRole(long id) throws NotFoundException, ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_VIEW_ROLE)) {
+            throw new ForbiddenException();
+        }
+
         RoleViewModel response = new RoleViewModel();
 
         Optional<Role> roleExists = roleRepository.findById(id);
@@ -60,6 +73,10 @@ public class RoleService implements IRoleService {
 
     @Override
     public RoleViewModel createRole(RoleCreateDto roleDto) throws BadRequestException, ForbiddenException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_CREATE_ROLE)) {
+            throw new ForbiddenException();
+        }
+
         RoleViewModel response = new RoleViewModel();
 
         Role role = new Role();
@@ -69,7 +86,7 @@ public class RoleService implements IRoleService {
         if (roleExists.isPresent()) {
             throw new BadRequestException(String.format("Role with name: '%s' already exists", roleDto.getName()));
         }
-        
+
         Set<Permission> permissions = new HashSet<Permission>();
         for (long permissionId : roleDto.getPermissionIds()) {
             permissions.add(permissionRepository.findById(permissionId).get());
@@ -86,7 +103,12 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public RoleViewModel updateRole(RoleUpdateDto roleDto) throws BadRequestException, ForbiddenException, NotFoundException {
+    public RoleViewModel updateRole(RoleUpdateDto roleDto)
+            throws BadRequestException, ForbiddenException, NotFoundException {
+        if (!permissionValidatorService.authorize(PermissionsProvider.CAN_UPDATE_ROLE)) {
+            throw new ForbiddenException();
+        }
+
         RoleViewModel response = new RoleViewModel();
 
         Optional<Role> roleExists = roleRepository.findById(roleDto.getId());

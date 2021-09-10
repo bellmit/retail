@@ -11,9 +11,9 @@ import com.ahirajustice.app.viewmodels.role.RoleViewModel;
 
 public interface IRoleService {
 
-    List<RoleViewModel> getRoles();
+    List<RoleViewModel> getRoles() throws ForbiddenException;
 
-    RoleViewModel getRole(long id) throws NotFoundException;
+    RoleViewModel getRole(long id) throws NotFoundException, ForbiddenException;
 
     RoleViewModel createRole(RoleCreateDto roleDto) throws BadRequestException, ForbiddenException;
 
