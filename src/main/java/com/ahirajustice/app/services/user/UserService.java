@@ -10,9 +10,12 @@ import com.ahirajustice.app.config.AppConfig;
 import com.ahirajustice.app.constants.SecurityConstants;
 import com.ahirajustice.app.dtos.user.UserCreateDto;
 import com.ahirajustice.app.dtos.user.UserUpdateDto;
+import com.ahirajustice.app.entities.Role;
 import com.ahirajustice.app.entities.User;
+import com.ahirajustice.app.enums.Roles;
 import com.ahirajustice.app.exceptions.BadRequestException;
 import com.ahirajustice.app.exceptions.NotFoundException;
+import com.ahirajustice.app.repositories.IRoleRepository;
 import com.ahirajustice.app.repositories.IUserRepository;
 import com.ahirajustice.app.viewmodels.user.UserViewModel;
 
@@ -36,6 +39,9 @@ public class UserService implements IUserService {
     IUserRepository userRepository;
 
     @Autowired
+    IRoleRepository roleRepository;
+
+    @Autowired
     BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -47,6 +53,7 @@ public class UserService implements IUserService {
         for (User user : users) {
             UserViewModel response = new UserViewModel();
             BeanUtils.copyProperties(user, response);
+            response.setRole(user.getRole().getName());
             responses.add(response);
         }
 
@@ -64,6 +71,7 @@ public class UserService implements IUserService {
         }
 
         BeanUtils.copyProperties(userExists.get(), response);
+        response.setRole(userExists.get().getRole().getName());
 
         return response;
     }
@@ -79,6 +87,7 @@ public class UserService implements IUserService {
         }
 
         BeanUtils.copyProperties(userExists.get(), response);
+        response.setRole(userExists.get().getRole().getName());
 
         return response;
     }
@@ -98,11 +107,14 @@ public class UserService implements IUserService {
         BeanUtils.copyProperties(userDto, user);
 
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
+        Role userRole = roleRepository.findByName(Roles.USER.name()).get();
         user.setEncryptedPassword(encryptedPassword);
+        user.setRole(userRole);
 
         User createdUser = userRepository.save(user);
 
         BeanUtils.copyProperties(createdUser, response);
+        response.setRole(createdUser.getRole().getName());
 
         return response;
     }

@@ -7,6 +7,7 @@ public class UserViewModel extends BaseViewModel {
     private String email;
     private String firstName;
     private String lastName;
+    private String role;
 
     public String getEmail() {
         return email;
@@ -30,6 +31,14 @@ public class UserViewModel extends BaseViewModel {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }
