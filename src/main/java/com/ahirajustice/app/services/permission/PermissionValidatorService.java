@@ -8,7 +8,9 @@ import com.ahirajustice.app.entities.User;
 import com.ahirajustice.app.services.user.IUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PermissionValidatorService implements IPermissionValidatorService {
 
     @Autowired
