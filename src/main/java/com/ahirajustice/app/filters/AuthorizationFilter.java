@@ -1,61 +1,106 @@
 package com.ahirajustice.app.filters;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.PrintWriter;
+import java.time.Instant;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ahirajustice.app.config.AppConfig;
 import com.ahirajustice.app.config.SpringApplicationContext;
 import com.ahirajustice.app.constants.SecurityConstants;
+import com.ahirajustice.app.dtos.auth.AuthToken;
+import com.ahirajustice.app.exceptions.UnauthorizedException;
+import com.ahirajustice.app.repositories.IUserRepository;
+import com.ahirajustice.app.services.auth.IAuthService;
+import com.ahirajustice.app.viewmodels.error.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.filter.GenericFilterBean;
 
-import io.jsonwebtoken.Jwts;
-
-public class AuthorizationFilter extends BasicAuthenticationFilter {
-
-    public AuthorizationFilter(AuthenticationManager authenticationManager) {
-        super(authenticationManager);
-    }
+public class AuthorizationFilter extends GenericFilterBean {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException {
-        String header = req.getHeader(SecurityConstants.HEADER_STRING);
 
-        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            chain.doFilter(req, res);
-            return;
-        }
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
-    }
+        IAuthService authService = (IAuthService) SpringApplicationContext.getBean("authService");
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
-        AppConfig appConfig = (AppConfig) SpringApplicationContext.getBean("appConfig");
+        if (!excludeFromAuth(request.getRequestURI(), request.getMethod())) {
+            String header = request.getHeader(SecurityConstants.HEADER_STRING);
 
-        String header = req.getHeader(SecurityConstants.HEADER_STRING);
+            if (StringUtils.isBlank(header)) {
+                writeErrorToResponse("Missing authorization header", response);
+                return;
+            }
 
-        if (header != null) {
+            String scheme = header.split(" ")[0];
             String token = header.split(" ")[1];
 
-            String user = Jwts.parser().setSigningKey(appConfig.SECRET_KEY).parseClaimsJws(token).getBody()
-                    .getSubject();
+            if (StringUtils.isBlank(scheme) || StringUtils.isBlank(token)) {
+                writeErrorToResponse("Malformed authorization header", response);
+                return;
+            }
 
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            if (!StringUtils.lowerCase(scheme).equals("bearer")) {
+                writeErrorToResponse("Invalid authentication scheme", response);
+                return;
+            }
+
+            AuthToken authToken = authService.decodeJwt(token);
+
+            if (!userExists(authToken) || isExpired(authToken)) {
+                writeErrorToResponse("Invalid or expired token", response);
+                return;
             }
         }
 
-        return null;
+        chain.doFilter(request, response);
     }
+
+    private boolean excludeFromAuth(String requestURI, String requestMethod) {
+        for (String url : SecurityConstants.EXCLUDE_FROM_AUTH_URLS) {
+            String excludeURI = url.split(", ")[0];
+            String excludeMethod = url.split(", ")[1];
+
+            if (excludeURI.equals(requestURI) && excludeMethod.equals(requestMethod)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean userExists(AuthToken token) {
+        IUserRepository userRepository = (IUserRepository) SpringApplicationContext.getBean("IUserRepository");
+        return userRepository.findByEmail(token.getUsername()).isPresent();
+    }
+
+    private boolean isExpired(AuthToken token) {
+        return Instant.now().isAfter(token.getExpiry().toInstant());
+    }
+
+    private void writeErrorToResponse(String message, HttpServletResponse response) throws IOException {
+        UnauthorizedException ex = new UnauthorizedException(message);
+        ErrorResponse errorResponse = ex.toErrorResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String errorResponseBody = mapper.writeValueAsString(errorResponse);
+
+        PrintWriter writer = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(ex.getStatusCode());
+        writer.print(errorResponseBody);
+        writer.flush();
+    }
+
 }

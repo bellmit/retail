@@ -1,7 +1,9 @@
 package com.ahirajustice.app.services.auth;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.ahirajustice.app.dtos.auth.AuthToken;
 
-public interface IAuthService extends UserDetailsService {
-    
+public interface IAuthService {
+
+    public AuthToken decodeJwt(String token);
+
 }

@@ -12,8 +12,8 @@ public class ErrorResponse {
         this.timestamp = LocalDateTime.now();
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getTimestamp() {
+        return timestamp.toString();
     }
 
     public void setTimestamp(LocalDateTime timestamp) {
