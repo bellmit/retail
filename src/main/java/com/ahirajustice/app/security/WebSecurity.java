@@ -1,6 +1,5 @@
 package com.ahirajustice.app.security;
 
-import com.ahirajustice.app.constants.SecurityConstants;
 import com.ahirajustice.app.filters.AuthorizationFilter;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,13 +17,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().csrf().disable()
             .authorizeRequests().anyRequest().permitAll()
-            .and().addFilter(getAuthenticationFilter()).addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
-
-    private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        final AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
-        filter.setFilterProcessesUrl(SecurityConstants.LOGIN_URL);
-        return filter;
+            .and().addFilterBefore(new AuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
 }
