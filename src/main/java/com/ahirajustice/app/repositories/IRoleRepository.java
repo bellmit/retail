@@ -7,7 +7,7 @@ import com.ahirajustice.app.entities.Role;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("IRoleRepository")
 public interface IRoleRepository extends CrudRepository<Role, Long> {
 
     Optional<Role> findByName(String name);
