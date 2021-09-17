@@ -1,5 +1,8 @@
 package com.ahirajustice.app.common;
 
+import java.security.SecureRandom;
+import java.util.Random;
+
 import com.ahirajustice.app.enums.TimeFactor;
 
 public class CommonHelper {
@@ -47,6 +50,17 @@ public class CommonHelper {
         }
 
         return result;
+    }
+
+    public String generateRandomString(int length, String alphabet) {
+        Random random = new SecureRandom();
+        StringBuilder returnValue = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            returnValue.append(alphabet.charAt(random.nextInt(alphabet.length())));
+        }
+
+        return new String(returnValue);
     }
 
 }
