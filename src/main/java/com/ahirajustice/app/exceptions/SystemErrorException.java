@@ -7,7 +7,7 @@ public class SystemErrorException extends ApplicationDomainException {
     }
 
     public SystemErrorException() {
-        super("An unexpected error occured. Please try again or confirm current operation status", "SystemError", 500);
+        super("An unexpected error occurred. Please try again or confirm current operation status", "SystemError", 500);
     }
 
 }
