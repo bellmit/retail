@@ -74,6 +74,10 @@ public class AuthorizationFilter extends GenericFilterBean {
             if (excludeURI.equals(requestURI) && excludeMethod.equals(requestMethod)){
                 return true;
             }
+
+            if (excludeURI.endsWith("/**") && requestURI.startsWith(excludeURI.replace("/**", "")) && excludeMethod.equals(requestMethod)){
+                return true;
+            }
         }
 
         return false;
