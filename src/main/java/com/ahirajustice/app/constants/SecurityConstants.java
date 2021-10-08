@@ -10,7 +10,14 @@ public class SecurityConstants {
     public static final String HEADER_STRING = "Authorization";
 
     // URLs
-    public static final String[] EXCLUDE_FROM_AUTH_URLS = new String[] { "/api/auth/login, POST", "/api/users, POST" };
+    public static final String[] EXCLUDE_FROM_AUTH_URLS = new String[] { 
+        "/, GET",
+        "/api/auth/login, POST", 
+        "/api/users, POST",
+        "/api/retail/docs, GET",
+        "/api/retail/docs.yaml, GET",
+        "/api/retail/**, GET"
+    };
 
     /**
      * List of endpoints that should not be logged.
